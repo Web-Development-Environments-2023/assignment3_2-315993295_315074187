@@ -94,7 +94,7 @@ paths: # TODO - also change all "idk"
         "200":
           description: "the user has ben successfully logged out"  
   /search: # Ours
-    post: # TODO: is it also get? See example of favorites
+    post: 
       tags:
       - search
       summary: search
@@ -110,6 +110,16 @@ paths: # TODO - also change all "idk"
           description: Result received.
         "400":
           description: Wrong parameters.
+    get: #TODO: added GET operation, plz check.
+      tags:
+        - search
+      summary: Get search results
+      description: Retrieves the search results.
+      responses:
+        "200":
+          description: Search results retrieved successfully.
+        "400":
+          description: Invalid request or parameters.
   /modal_creation: # Ours
     post:
       tags:
@@ -167,8 +177,88 @@ paths: # TODO - also change all "idk"
           description: user is not authorized
       security:
       - cookieAuth: []
-  /users/recipes: # Ours
-  /users/familyrecipes: # Ours
+  /users/recipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list
+    get:
+        tags:
+        - Users
+        summary: Return the recipes that were saved by user
+        description: Get an array of recipes that were saved by a specific user
+        responses:
+          "200":
+            description: data about the user's recipes returned
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/RecipePreview'
+          "401":
+            description: user is not authorized
+        security:
+        - cookieAuth: []
+    post:
+      tags:
+      - Users
+      summary: save recipe in the recipe list of a user
+      description: save recipe in the recipe list of a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reciepeId:
+                  type: string
+                  description: reciepe's id which the user saved
+                  example: 716429
+      responses:
+        "201":
+          description: The Recipe successfully saved as a recipe
+        "401":
+          description: user is not authorized
+      security:
+      - cookieAuth: []
+  /users/familyrecipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list
+    get:
+      tags:
+      - Users
+      summary: Return the family recipes that were saved by user
+      description: Get an array of recipes that were saved by a specific user
+      responses:
+        "200":
+          description: data about the user's family recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: user is not authorized
+      security:
+      - cookieAuth: []
+    post:
+      tags:
+      - Users
+      summary: save recipe in the family list of a user
+      description: save recipe in the family list of a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reciepeId:
+                  type: string
+                  description: reciepe's id which the user saved
+                  example: 716429
+      responses:
+        "201":
+          description: The Recipe successfully saved as family recipe
+        "401":
+          description: user is not authorized
+      security:
+      - cookieAuth: []
 
 components:
   schemas:
@@ -262,6 +352,14 @@ components:
         glutenFree:
           type: boolean
           description: indication if the recipe is gluten free
+          example: false
+        watched: # This one and the below one may need to be changed, unsure of usage. TODO
+          type: boolean
+          description: indication if the recipe has been watched by the logged-in user
+          example: false
+        added-to-fav:
+          type: boolean
+          description: indication if the recipe has been added by the logged-in user to their favourites list
           example: false
     Search: # Ours
       type: object
