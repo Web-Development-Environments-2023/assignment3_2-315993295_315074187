@@ -16,8 +16,33 @@ tags:
   description: All the user's personal app info
 - name: Recipes
   description: All reciepes general info
-paths:
-  /register:
+paths: # TODO - also change all "idk" 
+  /recipes/{recipeId}: # Theirs
+    get:
+      tags:
+      - Recipes
+      summary: Return preview details on recipe by his ID
+      description: Return preview details on recipe by his ID
+      parameters:
+      - name: recipeId
+        in: path
+        description: recipe's id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: data about the recipe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipePreview'
+        "404":
+          description: recipeId is not exists
+  /about: # Ours
+  /register: # Theirs
     post:
       tags:
       - Auth
@@ -35,7 +60,7 @@ paths:
           description: A new user has been added
         "400":
           description: wrong input parameters
-  /login:
+  /login: # Theirs
     post:
       tags:
       - Auth
@@ -49,7 +74,7 @@ paths:
         required: true
       responses:
         "200":
-          description: |
+          description:
             User was found in the DB and authenitcated successfully. The session ID is returned in a cookie named `session`.  You should include this cookie in subsequent requests
           headers:
             Set-Cookie:
@@ -60,15 +85,48 @@ paths:
                 example: session=87s97sdhgf279293f8w0e9
         "401":
           description: Authentication failed
-  /logout:
+  /logout: # Theirs
     post:
       tags:
         - Auth
       summary: logout a user from the system and delete his cookie
       responses:
         "200":
-          description: "the user has ben successfully logged out"
-  /users/favorites:
+          description: "the user has ben successfully logged out"  
+  /search: # Ours
+    post: # TODO: is it also get? See example of favorites
+      tags:
+      - search
+      summary: search
+      description: json object that contains search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Search'
+        required: true
+      responses:
+        "200":
+          description: Result received.
+        "400":
+          description: Wrong parameters.
+  /modal_creation: # Ours
+    post:
+      tags:
+        - recipe    
+      description: This path is used to input a recipe's details and create a new recipe in the database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Modal_Creation'
+      responses:
+        "201":
+          description: Recipe created successfully.
+        "400":
+          description: Invalid request or parameters.
+  /users/favorites: # Theirs
     get:
       tags:
       - Users
@@ -103,39 +161,18 @@ paths:
                   description: reciepe's id which the user saved
                   example: 716429
       responses:
-        "200":
+        "201":
           description: The Recipe successfully saved as favorite
         "401":
           description: user is not authorized
       security:
       - cookieAuth: []
-  /recipes/{recipeId}:
-    get:
-      tags:
-      - Recipes
-      summary: Return preview details on recipe by his ID
-      description: Return preview details on recipe by his ID
-      parameters:
-      - name: recipeId
-        in: path
-        description: recipe's id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
-      responses:
-        "200":
-          description: data about the recipe
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RecipePreview'
-        "404":
-          description: recipeId is not exists
+  /users/recipes: # Ours
+  /users/familyrecipes: # Ours
+
 components:
   schemas:
-    User:
+    User: # Theirs
       type: object
       properties:
         username:
@@ -175,23 +212,22 @@ components:
         #   description: URL for the user's image
         #   example: https://cloudinary.com/
       description: Model containing user info
-    LoginScheme:
+    LoginScheme: # Theirs
       type: object
       properties:
         username:
           maxLength: 8
           minLength: 3
           type: string
+          example: ladygaga
           description: username conatins letters only
         password:
           maxLength: 10
           minLength: 5
           description: password conatins at least one number and one special char
-          format: password
-      example:
-        username: my_name
-        password: my_name@12
-    RecipePreview:
+          example: ladygaga2@
+          format: password     
+    RecipePreview: # Theirs
       type: object
       properties:
         id:
@@ -227,4 +263,69 @@ components:
           type: boolean
           description: indication if the recipe is gluten free
           example: false
-  
+    Search: # Ours
+      type: object
+      properties:
+        Search_text:
+          type: string
+          description: The search string that will be used
+          example: Simple potatoes in the oven
+        Num_of_results:
+          type: number
+          description: "Integer, limited to 5, 10 or 15 (default 5). Used to specify the number of recipes to be returned."
+          example: 10
+          enum:
+          - 5
+          - 10
+          - 15
+        cuisnes:
+          type: string
+          description: "String of possible cuisine(s) of the recipes. Zero or more, comma separated (will be interpreted as 'OR'). "
+          example: African,Asian,American
+        diets:
+          type: string
+          description: "String of possible diet(s) for which the recipes must be suitable. You can specify multiple with comma meaning AND connection. You can specify multiple diets separated with a pipe | meaning OR connection. For example diet=gluten free,vegetarian means the recipes must be both, gluten free and vegetarian. If you specify diet=vegan|vegetarian, it means you want recipes that are vegan OR vegetarian."
+          example: Gluten Free,Ketogenic
+        intolerances:
+          type: string
+          description: "String representing a comma-separated list of intolerances. All recipes returned must not contain ingredients that are not suitable for people with the intolerances entered."
+          example: Egg
+    Modal_Creation: # Ours
+      type: object
+      properties:
+        Name:
+          type: string
+          description: The search string that will be used
+          example: Simple potatoes in the oven
+        Ingridients:
+          type: array
+          description: A list of all ingridients for the recipe.
+          example: Three ounces of salt and a raw chicken
+          items:
+            type: string
+        NumOfMeals:
+          type: integer
+          example: 2
+        Instructions:
+          type: array
+          description: A list of all ingridients for the recipe.
+          example: Shove it in the oven
+          items:
+            type: string
+        Pic:
+          type: string
+          description: picture of the food
+        Time:
+          type: string
+          description: how long it takes to make the meal
+          example: 01:30
+        Likes:
+          type: integer
+          description: How many likes the recipe get
+        Vegan:
+          type: boolean
+          description: True if vegan
+        GlutenFree:
+          type: boolean
+          description: True if Gluten Free
+      description: recipe creation form
