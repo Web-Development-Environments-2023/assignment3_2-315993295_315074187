@@ -11,13 +11,11 @@ router.post("/register", async (req, res, next) => {
     // username exists
     let user_details = {
       username: req.body.username,
+      password: req.body.password,
+      country: req.body.country,
+      email: req.body.email,
       firstname: req.body.firstname,
       lastname: req.body.lastname,
-      country: req.body.country,
-      password: req.body.password,
-      email: req.body.email,
-      //profilePic: req.body.profilePic
-      // TODO: do we need to add here the lists? If no, we should probably defualtly do something about it, idk yet.
     }
     let users = [];
     users = await DButils.execQuery("SELECT username from users");
@@ -31,8 +29,7 @@ router.post("/register", async (req, res, next) => {
       parseInt(process.env.bcrypt_saltRounds)
     );
     await DButils.execQuery(
-      `INSERT INTO users VALUES ('${user_details.username}', '${user_details.firstname}', '${user_details.lastname}',
-      '${user_details.country}', '${hash_password}', '${user_details.email}')`
+      `INSERT INTO users (username, password, country, email, first_name, last_name) VALUES ('${user_details.username}', '${hash_password}', '${user_details.country}', '${user_details.email}', '${user_details.firstname}', '${user_details.lastname}')`
     );
     res.status(201).send({ message: "user created", success: true });
   } catch (error) {

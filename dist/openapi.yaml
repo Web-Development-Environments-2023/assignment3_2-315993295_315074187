@@ -121,7 +121,7 @@ paths: # TODO - also change all "idk"
           description: Search results retrieved successfully.
         "400":
           description: Invalid request or parameters.
-  /recipe_creation: # Ours
+  /recipes/recipe_creation: # Ours
     post:
       tags:
         - Recipes
@@ -343,23 +343,6 @@ components:
           type: string
           description: user's email
           example: my_name12@gmail.com
-        # image-url:
-        #   pattern: URL
-        #   type: string
-        #   description: URL for the user's image
-        #   example: https://cloudinary.com/
-        watched:
-          type: array
-          description: A list of all recipes that the user watched.
-          example: 123
-          items:
-            type: integer
-        added-to-fav:
-          type: array
-          description: A list of all recipes that are in the users favourite list.
-          example: 123
-          items:
-            type: integer
       description: Model containing user info  
     LoginScheme: # Theirs
       type: object
@@ -368,22 +351,18 @@ components:
           maxLength: 8
           minLength: 3
           type: string
-          example: ladygaga
+          example: my_name
           description: username conatins letters only
         password:
           maxLength: 10
           minLength: 5
           description: password conatins at least one number and one special char
-          example: ladygaga2@
+          example: my_name@12
           format: password     
     RecipePreview: # Theirs
       type: object
       properties:
-        id:
-          type: integer
-          description: recipe identifier
-          example: 102
-        title:
+        name:
           type: string
           description: recipe name
           example: Simple Macaroni and Cheese
@@ -396,10 +375,6 @@ components:
           type: integer
           description: the time takes to make this recipe
           example: 45
-        popularity:
-          type: integer
-          description: how many likes got this recipe
-          example: 5987
         vegetarian:
           type: boolean
           description: indication if the recipe is vegetarian
@@ -447,15 +422,17 @@ components:
       properties:
         ingredients:
           type: array
-          description: A list of all ingredients for the recipe.
-          example: Three ounces of salt and a raw chicken
+          description: List of ingredients for the recipe
           items:
             type: string
+          example:
+            - "Three ounces of salt"
         preperation_steps:
           type: string
-          description: Text of all steps in the preperation.
-          example: Po-tay-toes! Boil 'em, mash 'em, stick 'em in a stew
+          description: steps to prepare the recipe
+          example: Po-tay-toes! Boil em, mash em, stick em in a stew
         num_of_servings:
           type: integer
-          example: 2
+          description: number of servings for the recipe
+          example: 4        
       description: Recipe details and information.
