@@ -301,7 +301,20 @@ components:
         #   type: string
         #   description: URL for the user's image
         #   example: https://cloudinary.com/
+        watched:
+          type: array
+          description: A list of all recipes that the user watched.
+          example: 00123
+          items:
+            type: integer
+        added-to-fav:
+          type: array
+          description: A list of all recipes that are in the users favourite list.
+          example: 00123
+          items:
+            type: integer
       description: Model containing user info
+      
     LoginScheme: # Theirs
       type: object
       properties:
@@ -353,14 +366,7 @@ components:
           type: boolean
           description: indication if the recipe is gluten free
           example: false
-        watched: # This one and the below one may need to be changed, unsure of usage. TODO
-          type: boolean
-          description: indication if the recipe has been watched by the logged-in user
-          example: false
-        added-to-fav:
-          type: boolean
-          description: indication if the recipe has been added by the logged-in user to their favourites list
-          example: false
+
     Search: # Ours
       type: object
       properties:
