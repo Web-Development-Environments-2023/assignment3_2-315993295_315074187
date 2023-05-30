@@ -9,7 +9,7 @@ servers:
 # remote:
 # - url: "http://132.72.65.211"
   description: SwaggerHub API Auto Mocking hey
-tags:
+tags: # TODO: Alter descriptions
 - name: Auth
   description: All authentication related routes
 - name: Users
@@ -93,11 +93,11 @@ paths: # TODO - also change all "idk"
       summary: logout a user from the system and delete his cookie
       responses:
         "200":
-          description: "the user has ben successfully logged out"  
+          description: "The user has been successfully logged out."  
   /search: # Ours
     post: 
       tags:
-      - search
+      - Recipes
       summary: search
       description: json object that contains search
       requestBody:
@@ -113,7 +113,7 @@ paths: # TODO - also change all "idk"
           description: Wrong parameters.
     get: #TODO: added GET operation, plz check.
       tags:
-        - search
+        - Recipes
       summary: Get search results
       description: Retrieves the search results.
       responses:
@@ -121,23 +121,27 @@ paths: # TODO - also change all "idk"
           description: Search results retrieved successfully.
         "400":
           description: Invalid request or parameters.
-  /modal_creation: # Ours
+  /recipe_creation: # Ours
     post:
       tags:
-        - recipe
-        - users
+        - Recipes
       description: This path is used to input a recipe's details and create a new recipe in the database.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Modal_Creation'
+              $ref: '#/components/schemas/Recipe'
       responses:
         "201":
           description: Recipe created successfully.
         "400":
           description: Invalid request or parameters.
+        "403":
+          description: User not logged in.
+        "409":
+          description: Recipe name taken
+
   /users/favorites: # Theirs
     get:
       tags:
@@ -437,48 +441,21 @@ components:
           example: Egg
     Recipe: # Ours
       type: object
+      allOf:
+        - $ref: '#/components/schemas/RecipePreview'
+        - type: object      
       properties:
-        id:
-          type: integer
-          description: recipe identifier
-          example: 102
-        name:
-          type: string
-          description: The search string that will be used
-          example: Simple potatoes in the oven
-        ingridients:
+        ingredients:
           type: array
-          description: A list of all ingridients for the recipe.
+          description: A list of all ingredients for the recipe.
           example: Three ounces of salt and a raw chicken
           items:
             type: string
-        mumOfMeals:
+        preperation_steps:
+          type: string
+          description: Text of all steps in the preperation.
+          example: Po-tay-toes! Boil 'em, mash 'em, stick 'em in a stew
+        num_of_servings:
           type: integer
           example: 2
-        instructions:
-          type: array
-          description: A list of all ingridients for the recipe.
-          example: Shove it in the oven
-          items:
-            type: string
-        image:
-          type: string
-          description: picture of the food
-        readyInMinutes:
-          type: integer
-          description: the time takes to make this recipe
-          example: 45
-        likes:
-          type: integer
-          description: How many likes the recipe get
-        vegan:
-          type: boolean
-          description: True if vegan
-        glutenFree:
-          type: boolean
-          description: True if Gluten Free
-        ingredients:
-        preperation_steps:
-        num_of_servings:        
-
       description: Recipe details and information.

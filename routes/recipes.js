@@ -17,7 +17,7 @@ router.get("/:recipeId", async (req, res, next) => {
   }
 });
 
-router.post("/recipeCreation", async (req, res, next) => { // TODO: Check
+router.post("/recipe_creation", async (req, res, next) => { // TODO: Check
   try {
     let recipe_details = {
       image: req.body.image,
@@ -29,13 +29,17 @@ router.post("/recipeCreation", async (req, res, next) => { // TODO: Check
       preperation_steps: req.body.preperation_steps,
       num_of_servings: req.body.num_of_servings
     }
-    let userid = req.body.userid
+
+    let userid = req.session.user_id
+    if (userid == undefined){
+      throw { status: 409, message: "Recipe name taken" };
+    }
 
     // Check if recipe name doesn't exist in the database
     let recipes = [];
     recipes = await DButils.execQuery("SELECT name from recipes");
     if (recipes.find((x) => x.name === recipe_details.name))
-      throw { status: 409, message: "Recipe name taken" };
+      throw { status: 403, message: "User not logged in." };
       
     // add to recipe database
     await DButils.execQuery(

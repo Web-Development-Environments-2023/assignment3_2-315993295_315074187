@@ -36,8 +36,7 @@ async function getRecipeDetails(recipe_id) {
         popularity: aggregateLikes,
         vegan: vegan,
         vegetarian: vegetarian,
-        glutenFree: glutenFree,
-        
+        glutenFree: glutenFree,        
     }
 }
 
@@ -50,8 +49,6 @@ async function search_recipes(text, num_of_results, filter1, filter2){ // TODO:
             apiKey: process.env.spooncular_apiKey
         }
     });
-
-
 }
 
 
