@@ -24,7 +24,7 @@ async function getRecipeInformation(recipe_id) {
 
 async function getRecipeDetails(recipe_id) {
     let recipe_info = await getRecipeInformation(recipe_id);
-    let { id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree } = recipe_info.data;
+    let { id, title, readyInMinutes, image, aggregateLikes, vegan, glutenFree } = recipe_info.data;
 
     return {
         id: id,
@@ -33,11 +33,9 @@ async function getRecipeDetails(recipe_id) {
         image: image,
         popularity: aggregateLikes,
         vegan: vegan,
-        vegetarian: vegetarian,
         glutenFree: glutenFree,        
     }
 }
-
 
 async function search_recipes(text, num_of_results, filter1, filter2){ // TODO:
     // ...
@@ -49,7 +47,21 @@ async function search_recipes(text, num_of_results, filter1, filter2){ // TODO:
     });
 }
 
+async function getRecipePreview(recipe_id, user_id) {
+    let recipe_info = await getRecipeInformation(recipe_id);
+    let { id, title, readyInMinutes, image, aggregateLikes, vegan, glutenFree } = recipe_info.data;
 
+    return {
+        image: image,
+        title: title,
+        readyInMinutes: readyInMinutes,
+        popularity: aggregateLikes,
+        vegan: vegan,
+        glutenFree: glutenFree,        
+    }
+}
+
+exports.getRecipePreview = getRecipePreview;
 exports.search_recipes = search_recipes;
 exports.getRecipeDetails = getRecipeDetails;
 
