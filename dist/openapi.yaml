@@ -16,6 +16,7 @@ tags:
   description: All the user's personal app info
 - name: Recipes
   description: All reciepes general info
+
 paths: # TODO - also change all "idk" 
   /recipes/{recipeId}: # Theirs
     get:
@@ -123,7 +124,8 @@ paths: # TODO - also change all "idk"
   /modal_creation: # Ours
     post:
       tags:
-        - recipe    
+        - recipe
+        - users
       description: This path is used to input a recipe's details and create a new recipe in the database.
       requestBody:
         required: true
@@ -304,17 +306,16 @@ components:
         watched:
           type: array
           description: A list of all recipes that the user watched.
-          example: 00123
+          example: 123
           items:
             type: integer
         added-to-fav:
           type: array
           description: A list of all recipes that are in the users favourite list.
-          example: 00123
+          example: 123
           items:
             type: integer
-      description: Model containing user info
-      
+      description: Model containing user info  
     LoginScheme: # Theirs
       type: object
       properties:
@@ -366,7 +367,6 @@ components:
           type: boolean
           description: indication if the recipe is gluten free
           example: false
-
     Search: # Ours
       type: object
       properties:
@@ -394,42 +394,50 @@ components:
           type: string
           description: "String representing a comma-separated list of intolerances. All recipes returned must not contain ingredients that are not suitable for people with the intolerances entered."
           example: Egg
-    Modal_Creation: # Ours
+    Recipe: # Ours
       type: object
       properties:
-        Name:
+        id:
+          type: integer
+          description: recipe identifier
+          example: 102
+        name:
           type: string
           description: The search string that will be used
           example: Simple potatoes in the oven
-        Ingridients:
+        ingridients:
           type: array
           description: A list of all ingridients for the recipe.
           example: Three ounces of salt and a raw chicken
           items:
             type: string
-        NumOfMeals:
+        mumOfMeals:
           type: integer
           example: 2
-        Instructions:
+        instructions:
           type: array
           description: A list of all ingridients for the recipe.
           example: Shove it in the oven
           items:
             type: string
-        Pic:
+        image:
           type: string
           description: picture of the food
-        Time:
-          type: string
-          description: how long it takes to make the meal
-          example: 01:30
-        Likes:
+        readyInMinutes:
+          type: integer
+          description: the time takes to make this recipe
+          example: 45
+        likes:
           type: integer
           description: How many likes the recipe get
-        Vegan:
+        vegan:
           type: boolean
           description: True if vegan
-        GlutenFree:
+        glutenFree:
           type: boolean
           description: True if Gluten Free
-      description: recipe creation form
+        ingredients:
+        preperation_steps:
+        num_of_servings:        
+
+      description: Recipe details and information.
