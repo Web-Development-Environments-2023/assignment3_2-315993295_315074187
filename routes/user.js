@@ -36,6 +36,21 @@ router.post('/favorites', async (req,res,next) => {
 })
 
 /**
+ * This path gets body with recipeId and save this recipe in the watched list of the logged-in user
+ */
+router.post('/watched', async (req,res,next) => {
+  try{
+    const user_id = req.session.user_id;
+    const recipe_id = req.body.recipeId;
+    await user_utils.markAsWatched(user_id,recipe_id);
+    // I don't think we need the below line?
+    //res.status(200).send("The Recipe successfully saved as favorite");
+    } catch(error){
+    next(error);
+  }
+})
+
+/**
  * This path returns the favorites recipes that were saved by the logged-in user
  */
 router.get('/favorites', async (req,res,next) => {
