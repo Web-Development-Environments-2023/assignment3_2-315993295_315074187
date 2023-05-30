@@ -42,7 +42,6 @@ paths: # TODO - also change all "idk"
                 $ref: '#/components/schemas/RecipePreview'
         "404":
           description: recipeId is not exists
-  /about: # Ours
   /register: # Theirs
     post:
       tags:
@@ -141,8 +140,7 @@ paths: # TODO - also change all "idk"
           description: User not logged in.
         "409":
           description: Recipe name taken
-
-  /users/favorites: # Theirs
+  /user/favorites: # Theirs
     get:
       tags:
       - Users
@@ -183,7 +181,7 @@ paths: # TODO - also change all "idk"
           description: user is not authorized
       security:
       - cookieAuth: []
-  /users/recipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list
+  /user/created_recipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list
     get:
         tags:
         - Users
@@ -224,7 +222,7 @@ paths: # TODO - also change all "idk"
           description: user is not authorized
       security:
       - cookieAuth: []
-  /users/familyrecipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list
+  /user/familyrecipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list
     get:
       tags:
       - Users
@@ -265,7 +263,7 @@ paths: # TODO - also change all "idk"
           description: user is not authorized
       security:
       - cookieAuth: []
-  /users/watchedrecipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list. UNSURE
+  /user/watchedrecipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list. UNSURE
       get:
         tags:
         - Users
