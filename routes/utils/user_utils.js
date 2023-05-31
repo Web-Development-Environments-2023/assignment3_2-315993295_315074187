@@ -9,6 +9,11 @@ async function getFavoriteRecipes(user_id){
     return recipes_id;
 }
 
+async function getCreatedRecipes(user_id){
+  const recipes_id = await DButils.execQuery(`select recipe_id from users_createdrecipes where user_id='${user_id}'`);
+  return recipes_id;
+}
+
 // TODO should watched_x be Foreign_KEY?
 async function markAsWatched(user_id, recipe_id) {
     // Retrieve the current values of watched_1, watched_2, and watched_3 from the database
@@ -42,7 +47,7 @@ async function getWatched(user_id){
 }
 
 
-
+exports.getCreatedRecipes = getCreatedRecipes;;
 exports.markAsFavorite = markAsFavorite;
 exports.markAsWatched = markAsWatched;
 exports.getFavoriteRecipes = getFavoriteRecipes;

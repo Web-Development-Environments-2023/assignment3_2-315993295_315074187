@@ -181,7 +181,7 @@ paths: # TODO - also change all "idk"
           description: user is not authorized
       security:
       - cookieAuth: []
-  /users/created_recipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list
+  /users/created_recipes: # Ours
     get:
         tags:
         - Users
@@ -200,29 +200,7 @@ paths: # TODO - also change all "idk"
             description: user is not authorized
         security:
         - cookieAuth: []
-    post:
-      tags:
-      - Users
-      summary: save recipe in the recipe list of a user
-      description: save recipe in the recipe list of a user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                reciepeId:
-                  type: string
-                  description: reciepe's id which the user saved
-                  example: 716429
-      responses:
-        "201":
-          description: The Recipe successfully saved as a recipe
-        "401":
-          description: user is not authorized
-      security:
-      - cookieAuth: []
-  /users/familyrecipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list
+  /users/familyrecipes: # Ours
     get:
       tags:
       - Users
@@ -263,7 +241,7 @@ paths: # TODO - also change all "idk"
           description: user is not authorized
       security:
       - cookieAuth: []
-  /users/watchedrecipes: # Ours, TODO: added here the same thing as users/favorites since it'll also be a list. UNSURE
+  /users/watchedrecipes: # Ours
       get:
         tags:
         - Users
