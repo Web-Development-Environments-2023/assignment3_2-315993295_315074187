@@ -34,7 +34,7 @@ router.post("/recipe_creation", async (req, res, next) => { // TODO: Check
 
     let userid = req.session.user_id
     if (userid == undefined){
-      throw { status: 403, message: "User not logged in." };
+      throw { status: 401, message: "User not logged in." };
     }
     
     // Check if recipe name doesn't exist in the database

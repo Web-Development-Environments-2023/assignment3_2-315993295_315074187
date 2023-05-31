@@ -40,8 +40,6 @@ paths: # TODO - also change all "idk"
             application/json:
               schema:
                 $ref: '#/components/schemas/RecipePreview'
-        "404":
-          description: recipeId is not exists
   /register: # Theirs
     post:
       tags:
@@ -136,7 +134,7 @@ paths: # TODO - also change all "idk"
           description: Recipe created successfully.
         "400":
           description: Invalid request or parameters.
-        "403":
+        "401":
           description: User not logged in.
         "409":
           description: Recipe name taken
@@ -178,7 +176,7 @@ paths: # TODO - also change all "idk"
         "201":
           description: The Recipe successfully saved as favorite
         "401":
-          description: user is not authorized
+          description: user is not authorized 
       security:
       - cookieAuth: []
   /users/created_recipes: # Ours
@@ -241,7 +239,7 @@ paths: # TODO - also change all "idk"
           description: user is not authorized
       security:
       - cookieAuth: []
-  /users/watchedrecipes: # Ours
+  /users/watched: # Ours
       get:
         tags:
         - Users
@@ -279,7 +277,7 @@ paths: # TODO - also change all "idk"
           "201":
             description: The Recipe successfully saved as watched recipe
           "401":
-            description: user is not authorized
+            description: user is not authorized       
         security:
         - cookieAuth: []
 

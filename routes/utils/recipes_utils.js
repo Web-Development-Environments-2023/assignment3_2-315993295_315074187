@@ -14,12 +14,16 @@ const intolerance = ["Dairy", "Egg", "Gluten", "Grain", "Peanut", "Seafood", "Se
 
 
 async function getRecipeInformation(recipe_id) {
-    return await axios.get(`${api_domain}/${recipe_id}/information`, {
-        params: {
-            includeNutrition: false,
-            apiKey: process.env.spooncular_apiKey
-        }
-    });
+    try {
+        return await axios.get(`${api_domain}/${recipe_id}/information`, {
+            params: {
+                includeNutrition: false,
+                apiKey: process.env.spooncular_apiKey
+            }
+        });
+    } catch (error) {
+        throw { status: 404, message: `Recipe ID "${recipe_id}" not in spoonacular DB.` }
+    }
 }
 
 async function getRecipeDetails(recipe_id) {
@@ -51,7 +55,7 @@ async function getRecipePreview(recipe_ids) {
     const results = [];
   
     for (const recipe_id of recipe_ids) {
-      let recipe_info = await getRecipeInformation(recipe_id);
+      let recipe_info = await getRecipeInformation(recipe_id);      
       let { id, title, readyInMinutes, image, aggregateLikes, vegan, glutenFree } = recipe_info.data;
   
       results.push({
