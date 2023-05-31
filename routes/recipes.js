@@ -19,7 +19,7 @@ router.get("/:recipeId", async (req, res, next) => {
   }
 });
 
-router.post("/recipe_creation", async (req, res, next) => { // TODO: Check
+router.post("/recipe_creation", async (req, res, next) => {
   try {
     let recipe_details = {
       image: req.body.image,

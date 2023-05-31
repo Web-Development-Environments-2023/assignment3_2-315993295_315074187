@@ -9,15 +9,15 @@ servers:
 # remote:
 # - url: "http://132.72.65.211"
   description: SwaggerHub API Auto Mocking hey
-tags: # TODO: Alter descriptions
+tags:
 - name: Auth
-  description: All authentication related routes
+  description: All authentication related routes.
 - name: Users
-  description: All the user's personal app info
+  description: All the user's personal app info.
 - name: Recipes
-  description: All recipes general info
+  description: All recipes general info and creation.
 
-paths: # TODO - also change all "idk" 
+paths:
   /recipes/{recipeId}: # Theirs
     get:
       tags:
@@ -108,7 +108,7 @@ paths: # TODO - also change all "idk"
           description: Result received.
         "400":
           description: Wrong parameters.
-    get: #TODO: added GET operation, plz check.
+    get:
       tags:
         - Recipes
       summary: Get search results
