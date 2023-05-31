@@ -14,6 +14,16 @@ async function getCreatedRecipes(user_id){
   return recipes_id;
 }
 
+async function getFamilyRecipes(user_id){
+  const recipes_id = await DButils.execQuery(`select recipe_id from users_familyrecipes where user_id='${user_id}'`);
+  return recipes_id;
+}
+
+async function markAsFamily(user_id, recipe_id){
+  await DButils.execQuery(`insert into users_familyrecipes values ('${user_id}','${recipe_id}')`);
+}
+
+
 // TODO should watched_x be Foreign_KEY?
 async function markAsWatched(user_id, recipe_id) {
     // Retrieve the current values of watched_1, watched_2, and watched_3 from the database
@@ -47,6 +57,8 @@ async function getWatched(user_id){
 }
 
 
+exports.markAsFamily = markAsFamily;
+exports.getFamilyRecipes = getFamilyRecipes;
 exports.getCreatedRecipes = getCreatedRecipes;;
 exports.markAsFavorite = markAsFavorite;
 exports.markAsWatched = markAsWatched;

@@ -15,7 +15,7 @@ tags: # TODO: Alter descriptions
 - name: Users
   description: All the user's personal app info
 - name: Recipes
-  description: All reciepes general info
+  description: All recipes general info
 
 paths: # TODO - also change all "idk" 
   /recipes/{recipeId}: # Theirs
@@ -230,10 +230,10 @@ paths: # TODO - also change all "idk"
             schema:
               type: object
               properties:
-                reciepeId:
+                recipeId:
                   type: string
-                  description: reciepe's id which the user saved
-                  example: 716429
+                  description: recipe's id which the user saved
+                  example: 1
       responses:
         "201":
           description: The Recipe successfully saved as family recipe
@@ -271,9 +271,9 @@ paths: # TODO - also change all "idk"
               schema:
                 type: object
                 properties:
-                  reciepeId:
+                  recipeId:
                     type: string
-                    description: reciepe's id which the user watched
+                    description: recipe's id which the user watched
                     example: 716429
         responses:
           "201":
