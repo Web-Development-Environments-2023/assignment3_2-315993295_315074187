@@ -87,7 +87,7 @@ router.get('/familyrecipes', async (req,res,next) => {
       return;
     }
 
-    const results = await recipe_utils.getRecipePreview(recipes_id_array);
+    const results = await recipe_utils.getRecipePreview(recipes_id_array, true);
     res.status(200).send(results);
   } catch(error){
     next(error); 
@@ -110,7 +110,7 @@ router.get('/created_recipes', async (req,res,next) => {
       return;
     }
 
-    const results = await recipe_utils.getRecipePreview(recipes_id_array);
+    const results = await recipe_utils.getRecipePreview(recipes_id_array, true);
     res.status(200).send(results);
   } catch(error){
     next(error); 
