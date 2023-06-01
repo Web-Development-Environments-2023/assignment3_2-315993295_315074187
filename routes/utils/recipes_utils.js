@@ -51,24 +51,29 @@ async function search_recipes(text, num_of_results, filter1, filter2){ // TODO:
     });
 }
 
-async function getRecipePreview(recipe_ids) {
+async function getRecipePreview(recipe_ids, local=false) {
     const results = [];
-  
+
     for (const recipe_id of recipe_ids) {
-      let recipe_info = await getRecipeInformation(recipe_id);      
-      let { id, title, readyInMinutes, image, aggregateLikes, vegan, glutenFree } = recipe_info.data;
-  
-      results.push({
-        image: image,
-        title: title,
-        readyInMinutes: readyInMinutes,
-        popularity: aggregateLikes,
-        vegan: vegan,
-        glutenFree: glutenFree,
-      });
+        let recipe_info;
+        if (local)
+            recipe_info = await getRecipeInformation(recipe_id);
+        else
+            recipe_info = await DButils.execQuery(`SELECT * FROM your_table_name WHERE recipe_id = ${recipe_id};`);
+
+        let { id, title, readyInMinutes, image, aggregateLikes, vegan, glutenFree } = recipe_info.data;
+        
+        results.push({
+            image: image,
+            title: title,
+            readyInMinutes: readyInMinutes,
+            popularity: aggregateLikes,
+            vegan: vegan,
+            glutenFree: glutenFree,
+        });
     }
     return results;
-  }
+}
   
 
 exports.getRecipePreview = getRecipePreview;
