@@ -212,6 +212,21 @@ paths:
           description: User not logged in.
         "409":
           description: Recipe name taken
+  /recipes/get_random_recipes:
+    get:
+      tags:
+        - Recipes
+      description: Retrieve three random recipes.
+      responses:
+        '200':
+          description: Successful response with random recipes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipePreview'
+
   /users/favorites: # Theirs
     get:
       tags:

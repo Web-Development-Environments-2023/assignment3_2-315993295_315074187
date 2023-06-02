@@ -7,12 +7,28 @@ const DButils = require("../routes/utils/DButils");
 router.get("/", (req, res) => res.send("im here"));
 
 
+/**
+ * Route handler for retrieving random recipes.
+ */
+router.get("/get_random_recipes", async (req, res, next) => { 
+  try {
+    const recipes = await recipes_utils.getRandomRecipes();
+    res.send(recipes);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+/**
+ * Route handler for searching recipes based on various parameters.
+ */
 router.get("/search", async (req, res, next) => { 
   try {
     let { Search_text, Num_of_results, cuisines, diets, intolerances } = req.query;
     
     cuisines = Array.isArray(cuisines) ? cuisines : cuisines ? [cuisines] : [];
-    diets = Array.isArray(diets) ? diets : diets ? [diets] : []; // TODO: Currently supports AND only. Will be able to change with frontend.
+    diets = Array.isArray(diets) ? diets : diets ? [diets] : [];  // TODO: Currently supports AND only. Will be able to change with frontend.
     intolerances = Array.isArray(intolerances) ? intolerances : intolerances ? [intolerances] : [];
 
     cuisines = cuisines.join(',');
@@ -28,20 +44,22 @@ router.get("/search", async (req, res, next) => {
 });
 
 
-
-
 /**
  * This path returns a full details of a recipe by its id
  */
-router.get("/:recipeId", async (req, res, next) => {
+router.get("/:recipeId", async (req, res, next) => { 
   try {
-    const recipe = await recipes_utils.getRecipeDetails(req.params.recipeId);
+    const recipe = await recipes_utils.getRecipePreview(req.params.recipeId, true);  // TODO: Should possibly be changed from `true` to `false` depending on the frontend.
     res.send(recipe);
   } catch (error) {
     next(error);
   }
 });
 
+
+/**
+ * Route handler for creating and inserting a recipe into the local database.
+ */
 router.post("/recipe_creation", async (req, res, next) => {
   try {
     let recipe_details = {
