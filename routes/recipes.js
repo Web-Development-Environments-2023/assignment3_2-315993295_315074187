@@ -7,6 +7,29 @@ const DButils = require("../routes/utils/DButils");
 router.get("/", (req, res) => res.send("im here"));
 
 
+router.get("/search", async (req, res, next) => { 
+  try {
+    let { Search_text, Num_of_results, cuisines, diets, intolerances } = req.query;
+    
+    cuisines = Array.isArray(cuisines) ? cuisines : cuisines ? [cuisines] : [];
+    diets = Array.isArray(diets) ? diets : diets ? [diets] : []; // TODO: Currently supports AND only. Will be able to change with frontend.
+    intolerances = Array.isArray(intolerances) ? intolerances : intolerances ? [intolerances] : [];
+
+    cuisines = cuisines.join(',');
+    diets = diets.join(',');
+    intolerances = intolerances.join(',');
+    
+    result = await recipes_utils.searchResult(Search_text, Num_of_results, cuisines, diets, intolerances);
+    res.send(result);
+
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+
+
 /**
  * This path returns a full details of a recipe by its id
  */
@@ -65,5 +88,6 @@ router.post("/recipe_creation", async (req, res, next) => {
       next(error);
     }
 });
+
 
 module.exports = router;

@@ -91,33 +91,107 @@ paths:
       responses:
         "200":
           description: "The user has been successfully logged out."  
-  /search: # Ours
-    post: 
-      tags:
-      - Recipes
-      summary: search
-      description: json object that contains search
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Search'
-        required: true
-      responses:
-        "200":
-          description: Result received.
-        "400":
-          description: Wrong parameters.
+  /recipes/search:
     get:
       tags:
         - Recipes
-      summary: Get search results
-      description: Retrieves the search results.
+      parameters:
+        - in: query
+          name: Search_text
+          description: The search string that will be used
+          schema:
+            type: string
+            example: Simple potatoes in the oven
+          required: true
+        - in: query
+          name: Num_of_results
+          description: Integer. Limited to 5, 10, or 15 (default 5). Used to specify the number of recipes to be returned.
+          schema:
+            type: integer
+            example: 10
+            default: 5
+            enum:
+              - 5
+              - 10
+              - 15
+          required: true
+        - in: query
+          name: cuisines
+          description: String of possible cuisine(s) of the recipes.
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - African
+                - Asian
+                - American
+                - British
+                - Cajun
+                - Caribbean
+                - Chinese
+                - Eastern European
+                - European
+                - French
+                - German
+                - Greek
+                - Indian
+                - Irish
+                - Italian
+                - Japanese
+                - Jewish
+                - Korean
+                - Latin American
+                - Mediterranean
+                - Mexican
+                - Middle Eastern
+                - Nordic
+                - Southern
+                - Spanish
+                - Thai
+                - Vietnamese
+        - in: query
+          name: diets
+          description: String of possible diet(s) of the recipes.
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Gluten Free
+                - Ketogenic
+                - Vegetarian
+                - Lacto-Vegetarian
+                - Ovo-Vegetarian
+                - Vegan
+                - Pescetarian
+                - Paleo
+                - Primal
+                - Low FODMAP
+                - Whole30
+        - in: query
+          name: intolerances
+          description: "String representing a comma-separated list of intolerances. All recipes returned must not contain ingredients that are not suitable for people with the intolerances entered."
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Dairy
+                - Egg
+                - Gluten
+                - Grain
+                - Peanut
+                - Seafood
+                - Sesame
+                - Shellfish
+                - Soy
+                - Sulfite
+                - Tree Nut
+                - Wheat
       responses:
-        "200":
-          description: Search results retrieved successfully.
-        "400":
-          description: Invalid request or parameters.
+        '200':
+          description: Returned search results.
   /recipes/recipe_creation: # Ours
     post:
       tags:
@@ -349,10 +423,6 @@ components:
           type: integer
           description: the time takes to make this recipe
           example: 45
-        vegetarian:
-          type: boolean
-          description: indication if the recipe is vegetarian
-          example: false
         vegan:
           type: boolean
           description: indication if the recipe is vegan
@@ -365,29 +435,90 @@ components:
       type: object
       properties:
         Search_text:
-          type: string
           description: The search string that will be used
+          type: string
           example: Simple potatoes in the oven
+          required: true
         Num_of_results:
           type: number
-          description: "Integer, limited to 5, 10 or 15 (default 5). Used to specify the number of recipes to be returned."
+          description: Integer. Limited to 5, 10 or 15 (default 5). Used to specify the number of recipes to be returned.
           example: 10
+          required: true
           enum:
           - 5
           - 10
           - 15
         cuisnes:
-          type: string
-          description: "String of possible cuisine(s) of the recipes. Zero or more, comma separated (will be interpreted as 'OR'). "
-          example: African,Asian,American
+          type: array
+          description: String of possible cuisine(s) of the recipes.
+          example: Jewish
+          items:
+            type: string
+            enum:
+              - African
+              - Asian
+              - American
+              - British
+              - Cajun
+              - Caribbean
+              - Chinese
+              - Eastern European
+              - European
+              - French
+              - German
+              - Greek
+              - Indian
+              - Irish
+              - Italian
+              - Japanese
+              - Jewish
+              - Korean
+              - Latin American
+              - Mediterranean
+              - Mexican
+              - Middle Eastern
+              - Nordic
+              - Southern
+              - Spanish
+              - Thai
+              - Vietnamese
         diets:
-          type: string
-          description: "String of possible diet(s) for which the recipes must be suitable. You can specify multiple with comma meaning AND connection. You can specify multiple diets separated with a pipe | meaning OR connection. For example diet=gluten free,vegetarian means the recipes must be both, gluten free and vegetarian. If you specify diet=vegan|vegetarian, it means you want recipes that are vegan OR vegetarian."
-          example: Gluten Free,Ketogenic
+          description: String of possible diet(s) of the recipes.
+          type: array
+          items:
+            type: string
+            example: Primal
+            enum:
+              - Gluten Free
+              - Ketogenic
+              - Vegetarian
+              - Lacto-Vegetarian
+              - Ovo-Vegetarian
+              - Vegan
+              - Pescetarian
+              - Paleo
+              - Primal
+              - Low FODMAP
+              - Whole30
         intolerances:
-          type: string
           description: "String representing a comma-separated list of intolerances. All recipes returned must not contain ingredients that are not suitable for people with the intolerances entered."
+          type: array
           example: Egg
+          items:
+            type: string
+            enum:
+              - Dairy
+              - Egg
+              - Gluten
+              - Grain
+              - Peanut
+              - Seafood
+              - Sesame
+              - Shellfish
+              - Soy
+              - Sulfite
+              - Tree Nut
+              - Wheat
     Recipe: # Ours
       type: object
       allOf:

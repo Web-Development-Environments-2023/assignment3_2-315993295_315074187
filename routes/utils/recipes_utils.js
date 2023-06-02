@@ -41,19 +41,9 @@ async function getRecipeDetails(recipe_id) {
     }
 }
 
-async function search_recipes(text, num_of_results, filter1, filter2){ // TODO:
-    // ...
-    await axios.get(`${api_domain}/recipes/complexSearch`, {
-        params: {
-            includeNutrition: false,
-            apiKey: process.env.spooncular_apiKey
-        }
-    });
-}
 
 async function getRecipePreview(recipe_ids, local=false) {
     const results = [];
-
     for (const recipe_id of recipe_ids) {
         let recipe_info;
         if (local)
@@ -75,9 +65,43 @@ async function getRecipePreview(recipe_ids, local=false) {
     return results;
 }
   
+async function searchResult(Search_text, Num_of_results, cuisines, diets, intolerances){
+
+    let result = await axios.get(`${api_domain}/complexSearch`,
+    {   
+        params:
+        {
+            query:String(Search_text), 
+            number:Number(Num_of_results), 
+            cuisine:cuisines, 
+            diet:diets,
+            intolerances:intolerances, 
+            apiKey:process.env.spooncular_apiKey,
+            addRecipeInformation: true
+        }
+    });
+
+
+    result = result.data["results"];
+    let recipes = [];
+    
+    result.forEach((recipe) => {
+        recipes.push ({
+            // id:recipe.id, 
+            title:recipe.title, 
+            readyInMinutes:recipe.readyInMinutes, 
+            image:recipe.image, 
+            aggregateLikes:recipe.aggregateLikes, 
+            vegan:recipe.vegan, 
+            glutenFree:recipe.glutenFree 
+        })
+      });
+    
+    return recipes;
+}
 
 exports.getRecipePreview = getRecipePreview;
-exports.search_recipes = search_recipes;
+exports.searchResult = searchResult;
 exports.getRecipeDetails = getRecipeDetails;
 
 

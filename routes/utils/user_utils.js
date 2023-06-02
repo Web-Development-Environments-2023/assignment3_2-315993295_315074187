@@ -28,7 +28,6 @@ async function markAsWatched(user_id, recipe_id) {
   const [currentWatched] = await DButils.execQuery(`SELECT watched_1, watched_2, watched_3 FROM users WHERE user_id = '${user_id}';`);
   const watchedArray = [currentWatched.watched_1, currentWatched.watched_2, currentWatched.watched_3];
 
-  console.log(`\n\nBefore:\n\t${watchedArray}}\n`);
   
   // Swaps the order if already in watched.
   if (watchedArray[0] == recipe_id)
@@ -74,7 +73,6 @@ async function markAsWatched(user_id, recipe_id) {
 
   await DButils.execQuery(updateQuery);
 
-  console.log(`After:\n\t${watchedArray}}\n\n\n`);
 }
 
   
