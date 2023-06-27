@@ -50,7 +50,7 @@ router.get('/favorites', async (req,res,next) => {
       return;
     }
 
-    const results = await recipe_utils.getRecipePreview(recipes_id_array, true);
+    const results = await recipe_utils.getRecipePreview(recipes_id_array, false);
     res.status(200).send(results);
   } catch(error){
     next(error); 
@@ -147,7 +147,7 @@ router.get('/watched', async (req,res,next) => {
       return;
     }
 
-    const results = await recipe_utils.getRecipePreview(recipes_id_array, true); // TODO: Should possibly be changed from `true` to `false` depending on the frontend.
+    const results = await recipe_utils.getRecipePreview(recipes_id_array, false); // TODO: Should possibly be changed from `true` to `false` depending on the frontend.
     res.status(200).send(results);
   } catch(error){
     next(error); 

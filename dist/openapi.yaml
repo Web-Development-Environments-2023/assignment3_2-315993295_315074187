@@ -442,6 +442,10 @@ components:
           type: integer
           description: the time takes to make this recipe
           example: 45
+        popularity:
+          type: integer
+          description: recipe popularity
+          example: 500
         vegan:
           type: boolean
           description: indication if the recipe is vegan

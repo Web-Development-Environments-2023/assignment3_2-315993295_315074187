@@ -1,9 +1,9 @@
 const axios = require("axios");
 const api_domain = "https://api.spoonacular.com/recipes";
-const cuisine = ["African", "Asian", "American", "British", "Cajun", "Caribbean", "Chinese", "Eastern European", "European", 
-"French", "German", "Greek", "Indian", "Irish", "Italian", "Japanese", "Jewish", "Korean", "Latin American", "Mediterranean", 
-"Mexican", "Middle Eastern", "Nordic", "Southern", "Spanish", "Thai", "Vietnamese"]
-const diet = ["Gluten Free", "Ketogenic", "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian", "Vegan", "Pescetarian", "Paleo", 
+const cuisine = ["African", "Asian", "American", "British", "Cajun", "Caribbean", "Chinese", "Eastern European", "European",
+    "French", "German", "Greek", "Indian", "Irish", "Italian", "Japanese", "Jewish", "Korean", "Latin American", "Mediterranean",
+    "Mexican", "Middle Eastern", "Nordic", "Southern", "Spanish", "Thai", "Vietnamese"]
+const diet = ["Gluten Free", "Ketogenic", "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian", "Vegan", "Pescetarian", "Paleo",
     "Primal", "Low FODMAP", "Whole30"]
 const intolerance = ["Dairy", "Egg", "Gluten", "Grain", "Peanut", "Seafood", "Sesame", "Shellfish", "Soy", "Sulfite", "Tree Nut", "Wheat"]
 
@@ -29,11 +29,16 @@ async function getRecipeInformation(recipe_id) {
 /**
  * Retrieves preview information for a list of recipes.
  *
- * @param {Array<number>} recipe_ids - An array of recipe IDs.
+ * @param {string} recipe_ids - A string representing a single ID or multiple IDs separated by commas.
  * @param {boolean} [local=false] - Flag indicating whether to retrieve recipe information locally or from the online database.
+ * @param {boolean} [full=false] - Flag indicating whether to retrieve full recipe information or just the preview information.
  * @returns {Array<Object>} An array of recipe preview objects.
  */
-async function getRecipePreview(recipe_ids, local=false) {
+async function getRecipePreview(recipe_ids, local = false, full = false) {
+    // Convert recipe_ids to an array if it's multiple ids
+    if (typeof recipe_ids === 'string') {
+        recipe_ids = recipe_ids.split(',').map(Number);
+    }
     const results = [];
     for (const recipe_id of recipe_ids) {
         let recipe_info;
@@ -42,20 +47,34 @@ async function getRecipePreview(recipe_ids, local=false) {
         else
             recipe_info = await getRecipeInformation(recipe_id);
 
-        let { id, title, readyInMinutes, image, aggregateLikes, vegan, glutenFree } = recipe_info.data;
-        
-        results.push({
-            image: image,
-            title: title,
-            readyInMinutes: readyInMinutes,
-            popularity: aggregateLikes,
-            vegan: vegan,
-            glutenFree: glutenFree,
-        });
+        let { id, title, readyInMinutes, image, aggregateLikes, vegan, glutenFree, extendedIngredients, instructions ,servings  } = recipe_info.data;
+
+        if (!full)
+            results.push({  // TODO: Should add push with id?
+                image: image,
+                title: title,
+                readyInMinutes: readyInMinutes,
+                popularity: aggregateLikes,
+                vegan: vegan,
+                glutenFree: glutenFree,
+            });
+        else
+            results.push({  // TODO: Should add push with id?
+                image: image,
+                title: title,
+                readyInMinutes: readyInMinutes,
+                popularity: aggregateLikes,
+                vegan: vegan,
+                glutenFree: glutenFree,
+                ingredients: extendedIngredients,
+                preperation_steps: instructions,
+                num_of_servings: servings
+            });
     }
     return results;
 }
-  
+
+
 
 /**
  * Performs a search for recipes based on the provided search parameters and returns the extracted recipe data.
@@ -68,21 +87,21 @@ async function getRecipePreview(recipe_ids, local=false) {
  * @returns {Array} - An array of recipes with the extracted data.
  */
 
-async function searchResult(Search_text, Num_of_results, cuisines, diets, intolerances){
+async function searchResult(Search_text, Num_of_results, cuisines, diets, intolerances) {
 
     let result = await axios.get(`${api_domain}/complexSearch`,
-    {   
-        params:
         {
-            query:String(Search_text), 
-            number:Number(Num_of_results), 
-            cuisine:cuisines, 
-            diet:diets,
-            intolerances:intolerances, 
-            apiKey:process.env.spooncular_apiKey,
-            addRecipeInformation: true
-        }
-    });
+            params:
+            {
+                query: String(Search_text),
+                number: Number(Num_of_results),
+                cuisine: cuisines,
+                diet: diets,
+                intolerances: intolerances,
+                apiKey: process.env.spooncular_apiKey,
+                addRecipeInformation: true
+            }
+        });
 
     result = result.data["results"];
     return extractData(result);
@@ -94,16 +113,16 @@ async function searchResult(Search_text, Num_of_results, cuisines, diets, intole
  *
  * @returns {Array} - An array of recipes with the extracted data.
  */
-async function getRandomRecipes(){
+async function getRandomRecipes() {
     let result = await axios.get(`${api_domain}/random`,
-    {   
-        params:
         {
-            number:Number(3), 
-            apiKey:process.env.spooncular_apiKey,
-        }
-    });
-    
+            params:
+            {
+                number: Number(3),
+                apiKey: process.env.spooncular_apiKey,
+            }
+        });
+
     result = result.data["recipes"];
     return extractData(result);
 }
@@ -115,21 +134,21 @@ async function getRandomRecipes(){
  * @param {Array} result - The result array containing recipe objects.
  * @returns {Array} - An array of recipes with extracted data.
  */
-async function extractData(result){
+async function extractData(result) {
     let recipes = [];
-    
+
     result.forEach((recipe) => {
-        recipes.push ({
-            id:recipe.id, 
-            title:recipe.title, 
-            readyInMinutes:recipe.readyInMinutes, 
-            image:recipe.image, 
-            aggregateLikes:recipe.aggregateLikes, 
-            vegan:recipe.vegan, 
-            glutenFree:recipe.glutenFree 
+        recipes.push({
+            id: recipe.id,
+            title: recipe.title,
+            readyInMinutes: recipe.readyInMinutes,
+            image: recipe.image,
+            aggregateLikes: recipe.aggregateLikes,
+            vegan: recipe.vegan,
+            glutenFree: recipe.glutenFree
         })
-      });
-    
+    });
+
     return recipes;
 }
 
