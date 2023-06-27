@@ -120,7 +120,7 @@ async function extractData(result){
     
     result.forEach((recipe) => {
         recipes.push ({
-            // id:recipe.id, 
+            id:recipe.id, 
             title:recipe.title, 
             readyInMinutes:recipe.readyInMinutes, 
             image:recipe.image, 

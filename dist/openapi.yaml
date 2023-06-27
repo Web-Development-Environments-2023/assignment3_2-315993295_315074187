@@ -425,6 +425,10 @@ components:
     RecipePreview: # Theirs
       type: object
       properties:
+        recipeId:
+          type: integer
+          description: recipe ID
+          example: 123
         name:
           type: string
           description: recipe name

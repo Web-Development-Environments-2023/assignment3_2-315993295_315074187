@@ -49,7 +49,7 @@ router.get("/search", async (req, res, next) => {
  */
 router.get("/:recipeId", async (req, res, next) => { 
   try {
-    const recipe = await recipes_utils.getRecipePreview(req.params.recipeId, true);  // TODO: Should possibly be changed from `true` to `false` depending on the frontend.
+    const recipe = await recipes_utils.getRecipePreview(req.params.recipeId, false);  // TODO: Should possibly be changed from `true` to `false` depending on the frontend.
     res.send(recipe);
   } catch (error) {
     next(error);
