@@ -226,7 +226,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RecipePreview'
-
   /users/favorites: # Theirs
     get:
       tags:
@@ -369,6 +368,46 @@ paths:
             description: user is not authorized       
         security:
         - cookieAuth: []
+  /users/recipe_creation:
+    post:
+      tags:
+        - Users
+      summary: Create and insert a recipe into the local database
+      responses:
+        '201':
+          description: Recipe created successfully
+        '401':
+          description: User not logged in
+        '409':
+          description: Recipe name already taken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                name:
+                  type: string
+                readyInMinutes:
+                  type: integer
+                vegan:
+                  type: boolean
+                glutenfree:
+                  type: boolean
+                ingredients:
+                  type: array
+                  items:
+                    type: string
+                preperation_steps:
+                  type: string
+                num_of_servings:
+                  type: integer
+      security:
+        - cookieAuth: []
+
 
 components:
   schemas:
@@ -425,6 +464,7 @@ components:
     RecipePreview: # Theirs
       type: object
       properties:
+
         recipeId:
           type: integer
           description: recipe ID
@@ -454,6 +494,28 @@ components:
           type: boolean
           description: indication if the recipe is gluten free
           example: false
+    Recipe: # Ours
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/RecipePreview'
+        - type: object      
+      properties:
+        ingredients:
+          type: array
+          description: List of ingredients for the recipe
+          items:
+            type: string
+          example:
+            - "Three ounces of salt"
+        preperation_steps:
+          type: string
+          description: steps to prepare the recipe
+          example: Po-tay-toes! Boil em, mash em, stick em in a stew
+        num_of_servings:
+          type: integer
+          description: number of servings for the recipe
+          example: 4        
+      description: Recipe details and information.
     Search: # Ours
       type: object
       properties:
@@ -542,25 +604,3 @@ components:
               - Sulfite
               - Tree Nut
               - Wheat
-    Recipe: # Ours
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/RecipePreview'
-        - type: object      
-      properties:
-        ingredients:
-          type: array
-          description: List of ingredients for the recipe
-          items:
-            type: string
-          example:
-            - "Three ounces of salt"
-        preperation_steps:
-          type: string
-          description: steps to prepare the recipe
-          example: Po-tay-toes! Boil em, mash em, stick em in a stew
-        num_of_servings:
-          type: integer
-          description: number of servings for the recipe
-          example: 4        
-      description: Recipe details and information.
