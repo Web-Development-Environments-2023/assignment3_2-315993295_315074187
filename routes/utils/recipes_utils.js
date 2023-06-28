@@ -50,7 +50,8 @@ async function getRecipePreview(recipe_ids, local = false, full = false) {
         let { id, title, readyInMinutes, image, aggregateLikes, vegan, glutenFree, extendedIngredients, instructions ,servings  } = recipe_info.data;
 
         if (!full)
-            results.push({  // TODO: Should add push with id?
+            results.push({
+                id: id,
                 image: image,
                 title: title,
                 readyInMinutes: readyInMinutes,
