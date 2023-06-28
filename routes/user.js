@@ -183,8 +183,8 @@ router.post("/recipe_creation", async (req, res, next) => {
 
     // add to recipe database
     await DButils.execQuery(
-      `INSERT INTO recipes (image, name, readyInMinutes, vegan, glutenfree, ingredients, preperation_steps, num_of_servings)
-       VALUES ('${recipe_details.image}', '${recipe_details.name}', '${recipe_details.readyInMinutes}', 
+      `INSERT INTO recipes (user_id_recipes, image, name, readyInMinutes, vegan, glutenfree, ingredients, preperation_steps, num_of_servings)
+       VALUES ('${userid}', '${recipe_details.image}', '${recipe_details.name}', '${recipe_details.readyInMinutes}', 
        '${recipe_details.vegan ? 1 : 0}', '${recipe_details.glutenfree ? 1 : 0}', '${JSON.stringify(recipe_details.ingredients)}', '${recipe_details.preperation_steps}', '${recipe_details.num_of_servings}')`
     );
 
