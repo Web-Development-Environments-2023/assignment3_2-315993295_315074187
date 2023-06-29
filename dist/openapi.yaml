@@ -192,26 +192,6 @@ paths:
       responses:
         '200':
           description: Returned search results.
-  /recipes/recipe_creation: # Ours
-    post:
-      tags:
-        - Recipes
-      description: This path is used to input a recipe's details and create a new recipe in the database.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Recipe'
-      responses:
-        "201":
-          description: Recipe created successfully.
-        "400":
-          description: Invalid request or parameters.
-        "401":
-          description: User not logged in.
-        "409":
-          description: Recipe name taken
   /recipes/get_random_recipes:
     get:
       tags:
