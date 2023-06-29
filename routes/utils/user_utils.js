@@ -16,7 +16,7 @@ async function markAsFavorite(user_id, recipe_id) {
     );
 
     if (existingRecord.length > 0) {
-        return; // Skip insertion or perform any other desired action
+        return;
     }
 
     // Insert the record if it doesn't already exist
@@ -67,8 +67,20 @@ async function getFamilyRecipes(user_id) {
  * @param {string} recipe_id - The ID of the recipe to mark as family recipe.
  */
 async function markAsFamily(user_id, recipe_id) {
+    const check = await DButils.execQuery(
+        `SELECT id FROM recipes WHERE user_id = '${user_id}' AND id = '${recipe_id}'`
+    );
+
+    if (check.length === 0){
+        throw { status: 403, message: "Recipe doesn't exist in local database, or does not belong to this user." }
+    }
     await DButils.execQuery(`insert into users_familyrecipes values ('${user_id}','${recipe_id}')`);
 }
+
+
+
+
+
 
 /**
  * Marks a recipe as watched by the specified user.
