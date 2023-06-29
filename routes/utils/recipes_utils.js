@@ -8,7 +8,6 @@ const diet = ["Gluten Free", "Ketogenic", "Vegetarian", "Lacto-Vegetarian", "Ovo
     "Primal", "Low FODMAP", "Whole30"]
 const intolerance = ["Dairy", "Egg", "Gluten", "Grain", "Peanut", "Seafood", "Sesame", "Shellfish", "Soy", "Sulfite", "Tree Nut", "Wheat"]
 
-
 /**
  * Get recipes list from spooncular response and extract the relevant recipe data for preview
  * @param {*} recipes_info 
@@ -43,35 +42,50 @@ async function getRecipePreview(recipe_ids, local = false, full = false) {
     const results = [];
     for (const recipe_id of recipe_ids) {
         let recipe_info;
-        if (local)
-            recipe_info = await DButils.execQuery(`SELECT * FROM your_table_name WHERE recipe_id = ${recipe_id};`);
-        else
+        if (local) {
+            recipe_info = await DButils.execQuery(`SELECT * FROM recipes WHERE id = ${recipe_id};`);
+            recipe_info = recipe_info[0];
+            results.push({
+                image: recipe_info.image,
+                title: recipe_info.title,
+                readyInMinutes: recipe_info.readyInMinutes,
+                popularity: recipe_info.aggregateLikes,
+                vegan: recipe_info.vegan,
+                glutenFree: recipe_info.glutenFree,
+                ingredients: recipe_info.extendedIngredients,
+                preperation_steps: recipe_info.instructions,
+                num_of_servings: recipe_info.servings
+            });
+        }
+        else {
+
             recipe_info = await getRecipeInformation(recipe_id);
 
-        let { id, title, readyInMinutes, image, aggregateLikes, vegan, glutenFree, extendedIngredients, instructions ,servings  } = recipe_info.data;
+            let { id, title, readyInMinutes, image, aggregateLikes, vegan, glutenFree, extendedIngredients, instructions, servings } = recipe_info.data;
 
-        if (!full)
-            results.push({
-                id: id,
-                image: image,
-                title: title,
-                readyInMinutes: readyInMinutes,
-                popularity: aggregateLikes,
-                vegan: vegan,
-                glutenFree: glutenFree,
-            });
-        else
-            results.push({  // TODO: Should add push with id?
-                image: image,
-                title: title,
-                readyInMinutes: readyInMinutes,
-                popularity: aggregateLikes,
-                vegan: vegan,
-                glutenFree: glutenFree,
-                ingredients: extendedIngredients,
-                preperation_steps: instructions,
-                num_of_servings: servings
-            });
+            if (!full)
+                results.push({
+                    id: id,
+                    image: image,
+                    title: title,
+                    readyInMinutes: readyInMinutes,
+                    popularity: aggregateLikes,
+                    vegan: vegan,
+                    glutenFree: glutenFree,
+                });
+            else
+                results.push({  // TODO: Should add push with id?
+                    image: image,
+                    title: title,
+                    readyInMinutes: readyInMinutes,
+                    popularity: aggregateLikes,
+                    vegan: vegan,
+                    glutenFree: glutenFree,
+                    ingredients: extendedIngredients,
+                    preperation_steps: instructions,
+                    num_of_servings: servings
+                });
+        }
     }
     return results;
 }
@@ -80,14 +94,14 @@ async function getRecipePreview(recipe_ids, local = false, full = false) {
 
 /**
  * Performs a search for recipes based on the provided search parameters and returns the extracted recipe data.
- *
- * @param {string} Search_text - The text to search for in recipe names and descriptions.
- * @param {number} Num_of_results - The maximum number of search results to retrieve.
- * @param {string[]} cuisines - The cuisines for which the recipes must be suitable.
- * @param {string[]} diets - The diets for which the recipes must be suitable.
- * @param {string[]} intolerances - The intolerances for which the recipes must be suitable.
- * @returns {Array} - An array of recipes with the extracted data.
- */
+*
+* @param {string} Search_text - The text to search for in recipe names and descriptions.
+* @param {number} Num_of_results - The maximum number of search results to retrieve.
+* @param {string[]} cuisines - The cuisines for which the recipes must be suitable.
+* @param {string[]} diets - The diets for which the recipes must be suitable.
+* @param {string[]} intolerances - The intolerances for which the recipes must be suitable.
+* @returns {Array} - An array of recipes with the extracted data.
+*/
 
 async function searchResult(Search_text, Num_of_results, cuisines, diets, intolerances) {
 
