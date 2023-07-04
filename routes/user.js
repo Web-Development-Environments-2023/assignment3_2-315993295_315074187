@@ -64,7 +64,7 @@ router.get('/favorites', async (req, res, next) => {
 router.post('/familyrecipes', async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
-    const recipe_id = req.body.recipeId;
+    const recipe_id = req.bo; dy.recipeId;
     await user_utils.markAsFamily(user_id, recipe_id);
     res.status(201).send("The Recipe successfully saved as a family recipe.");
   } catch (error) {
@@ -78,7 +78,11 @@ router.post('/familyrecipes', async (req, res, next) => {
 router.get('/familyrecipes', async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
-    const recipes_id = await user_utils.getFamilyRecipes(user_id);
+    const result = await user_utils.getFamilyRecipes(user_id);
+
+    const recipes_id = result[0];
+    const family_details = result[1];
+
     let recipes_id_array = [];
     recipes_id.map((element) => recipes_id_array.push(element.recipe_id)); //extracting the recipe ids into array
 
@@ -86,8 +90,13 @@ router.get('/familyrecipes', async (req, res, next) => {
       res.status(200).send([]);
       return;
     }
-
     const results = await recipe_utils.getRecipePreview(recipes_id_array, true);
+
+    for (let i = 0; i < results.length; i++) {
+      results[i].belongs_to = family_details[i].belongs_to;
+      results[i].prepared_in = family_details[i].prepared_in;
+    }
+
     res.status(200).send(results);
   } catch (error) {
     next(error);

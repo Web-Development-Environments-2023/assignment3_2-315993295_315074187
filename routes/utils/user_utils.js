@@ -55,8 +55,12 @@ async function getCreatedRecipes(user_id) {
  * @returns {Promise<Array>} - A promise that resolves to an array of recipe IDs.
  */
 async function getFamilyRecipes(user_id) {
-    const recipes_id = await DButils.execQuery(`select recipe_id from users_familyrecipes where user_id='${user_id}'`);
-    return recipes_id;
+    const recipe_id = await DButils.execQuery(`SELECT recipe_id FROM users_familyrecipes WHERE user_id='${user_id}'`);
+    const recipeIds = recipe_id.map((row) => row.recipe_id).join(","); // Extract recipe IDs and create a comma-separated string
+    const family_details = await DButils.execQuery(`SELECT belongs_to, prepared_in FROM users_familyrecipes WHERE user_id='${user_id}' AND recipe_id IN (${recipeIds})`);
+
+    const result = [recipe_id, family_details];
+    return result;
 }
 
 
@@ -71,7 +75,7 @@ async function markAsFamily(user_id, recipe_id) {
         `SELECT id FROM recipes WHERE user_id = '${user_id}' AND id = '${recipe_id}'`
     );
 
-    if (check.length === 0){
+    if (check.length === 0) {
         throw { status: 403, message: "Recipe doesn't exist in local database, or does not belong to this user." }
     }
     await DButils.execQuery(`insert into users_familyrecipes values ('${user_id}','${recipe_id}')`);

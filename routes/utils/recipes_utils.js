@@ -74,7 +74,7 @@ async function getRecipePreview(recipe_ids, local = false, full = false) {
                     glutenFree: glutenFree,
                 });
             else
-                results.push({  // TODO: Should add push with id?
+                results.push({
                     image: image,
                     title: title,
                     readyInMinutes: readyInMinutes,
