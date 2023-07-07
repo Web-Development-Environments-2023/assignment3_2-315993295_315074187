@@ -8,44 +8,44 @@ class Stack {
      * @param {Array} items - The initial items in the stack.
      */
     constructor(items) {
-      this.items = items;
+        this.items = items;
     }
-  
+
     /**
      * Pushes an element onto the stack.
      * @param {*} element - The element to be pushed.
      */
     push(element) {
-      this.removeByItem(element);
-      this.items.push(element);
+        this.removeByItem(element);
+        this.items.push(element);
     }
-  
+
     /**
      * Removes an element from the stack by its value.
      * @param {*} element - The element to be removed.
      */
     removeByItem(element) {
-      const index = Number(this.includes(element));
-      if (index !== -1) {
-        this.items.splice(index, 1);
-      }
+        const index = Number(this.includes(element));
+        if (index !== -1) {
+            this.items.splice(index, 1);
+        }
     }
-  
+
     /**
      * Checks if the stack includes the specified element and returns its index.
      * @param {*} element - The element to search for.
      * @returns {number} The index of the element if found, or -1 if not found.
      */
     includes(element) {
-      for (let i = 0; i < this.items.length; i++) {
-        if (String(this.items[i]) === element) {
-          return i;
+        for (let i = 0; i < this.items.length; i++) {
+            if (String(this.items[i]) === element) {
+                return i;
+            }
         }
-      }
-      return -1;
+        return -1;
     }
-  }
-  
+}
+
 
 
 /**
@@ -135,19 +135,25 @@ async function markAsFamily(user_id, recipe_id) {
 
 /**
  * Marks a recipe as watched by the specified user.
- * Specfically, pushes the given recipe into a "queue" ran in the SQL database.
+ * Specifically, pushes the given recipe into a "queue" stored in the SQL database.
  *
  * @param {string} user_id - The ID of the user.
  * @param {string} recipe_id - The ID of the recipe to mark as watched.
+ * @returns {Promise<void>} - A Promise that resolves when the operation is completed.
  */
 async function markAsWatched(user_id, recipe_id) {
+    // Retrieve the current watched recipes for the user
     const sqlresult = await DButils.execQuery(`SELECT watched FROM users WHERE user_id = '${user_id}';`);
     let currentWatched = sqlresult[0].watched ? sqlresult[0].watched : [];
+
+    // Convert the current watched recipes to an array if it's not already an array
     currentWatched = Array.isArray(currentWatched) ? currentWatched : [currentWatched];
+
+    // Create a stack object and push the recipe_id to it
     const stack = new Stack(currentWatched);
     stack.push(recipe_id);
 
-    // Update DB.
+    // Update the watched recipes in the database
     const updateQuery = `
     UPDATE users
     SET watched = '[${stack.items}]'
@@ -163,7 +169,7 @@ async function markAsWatched(user_id, recipe_id) {
  * Retrieves the watched recipes for the specified user.
  *
  * @param {string} user_id - The ID of the user.
- * @returns {Array} - An array containing the IDs of the watched recipes in the order [watched_1, watched_2, watched_3].
+ * @returns {Promise<Array>} - A Promise that resolves with an array containing the IDs of the watched recipes.
  */
 async function getWatched(user_id) {
     const query = `SELECT watched FROM users WHERE user_id='${user_id}'`;
@@ -171,6 +177,7 @@ async function getWatched(user_id) {
     result = result[0].watched;
     return result;
 }
+
 
 
 exports.getWatched = getWatched;
