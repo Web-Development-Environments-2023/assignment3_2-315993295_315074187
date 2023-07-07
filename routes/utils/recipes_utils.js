@@ -21,7 +21,7 @@ async function getRecipeInformation(recipe_id) {
             }
         });
     } catch (error) {
-        throw { status: 404, message: `Recipe ID "${recipe_id}" not in spoonacular DB.` }
+        throw { status: 404, message: `Error retreiving recipe information: ${error}` }
     }
 }
 
@@ -75,6 +75,7 @@ async function getRecipePreview(recipe_ids, local = false, full = false) {
                 });
             else
                 results.push({
+                    id: id,
                     image: image,
                     title: title,
                     readyInMinutes: readyInMinutes,

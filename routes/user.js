@@ -195,6 +195,8 @@ router.post("/recipe_creation", async (req, res, next) => {
     VALUES ('${userid}', '${recipe_details.image}', '${recipe_details.name}', '${recipe_details.readyInMinutes}', 
     0, '${recipe_details.vegan ? 1 : 0}', '${recipe_details.glutenfree ? 1 : 0}', '${JSON.stringify(recipe_details.ingredients)}', '${recipe_details.preperation_steps}', '${recipe_details.num_of_servings}')`
     );
+    
+    res.status(200).send({ message: "Added recipe to the local database", success: true });
 
   } catch (error) {
     next(error);

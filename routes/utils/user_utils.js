@@ -38,7 +38,7 @@ class Stack {
      */
     includes(element) {
         for (let i = 0; i < this.items.length; i++) {
-            if (String(this.items[i]) === element) {
+            if (String(this.items[i]) == element) {
                 return i;
             }
         }
@@ -159,7 +159,6 @@ async function markAsWatched(user_id, recipe_id) {
     SET watched = '[${stack.items}]'
     WHERE user_id = '${user_id}';
     `;
-
     await DButils.execQuery(updateQuery);
     return;
 }
