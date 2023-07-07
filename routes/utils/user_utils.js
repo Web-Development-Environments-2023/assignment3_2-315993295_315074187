@@ -1,6 +1,53 @@
 const DButils = require("./DButils");
 
 
+
+class Stack {
+    /**
+     * Creates a new Stack instance.
+     * @param {Array} items - The initial items in the stack.
+     */
+    constructor(items) {
+      this.items = items;
+    }
+  
+    /**
+     * Pushes an element onto the stack.
+     * @param {*} element - The element to be pushed.
+     */
+    push(element) {
+      this.removeByItem(element);
+      this.items.push(element);
+    }
+  
+    /**
+     * Removes an element from the stack by its value.
+     * @param {*} element - The element to be removed.
+     */
+    removeByItem(element) {
+      const index = Number(this.includes(element));
+      if (index !== -1) {
+        this.items.splice(index, 1);
+      }
+    }
+  
+    /**
+     * Checks if the stack includes the specified element and returns its index.
+     * @param {*} element - The element to search for.
+     * @returns {number} The index of the element if found, or -1 if not found.
+     */
+    includes(element) {
+      for (let i = 0; i < this.items.length; i++) {
+        if (String(this.items[i]) === element) {
+          return i;
+        }
+      }
+      return -1;
+    }
+  }
+  
+
+
 /**
  * Marks a recipe as a favorite for the specified user.
  *
@@ -94,53 +141,21 @@ async function markAsFamily(user_id, recipe_id) {
  * @param {string} recipe_id - The ID of the recipe to mark as watched.
  */
 async function markAsWatched(user_id, recipe_id) {
-    const [currentWatched] = await DButils.execQuery(`SELECT watched_1, watched_2, watched_3 FROM users WHERE user_id = '${user_id}';`);
-    const watchedArray = [currentWatched.watched_1, currentWatched.watched_2, currentWatched.watched_3];
-
-
-    // Swaps the order if already in watched.
-    if (watchedArray[0] == recipe_id)
-        return;
-    else if (watchedArray[1] == recipe_id) {
-        let temp = watchedArray[0];
-        watchedArray[0] = watchedArray[1];
-        watchedArray[1] = temp;
-    }
-    else if (watchedArray[2] == recipe_id) {
-        let temp = watchedArray[0];
-        watchedArray[0] = watchedArray[2];
-        watchedArray[2] = watchedArray[1];
-        watchedArray[1] = temp;
-    }
-
-    // Fill if any are null (-1).
-    else if (watchedArray[0] == -1)
-        watchedArray[0] = recipe_id;
-    else if (watchedArray[1] == -1) {
-        watchedArray[1] = watchedArray[0];
-        watchedArray[0] = recipe_id;
-    }
-    else if (watchedArray[2] == -1) {
-        watchedArray[2] = watchedArray[1];
-        watchedArray[1] = watchedArray[0];
-        watchedArray[0] = recipe_id;
-    }
-
-    // No nulls, but value isn't in watched.
-    else {
-        watchedArray[2] = watchedArray[1];
-        watchedArray[1] = watchedArray[0];
-        watchedArray[0] = recipe_id;
-    }
+    const sqlresult = await DButils.execQuery(`SELECT watched FROM users WHERE user_id = '${user_id}';`);
+    let currentWatched = sqlresult[0].watched ? sqlresult[0].watched : [];
+    currentWatched = Array.isArray(currentWatched) ? currentWatched : [currentWatched];
+    const stack = new Stack(currentWatched);
+    stack.push(recipe_id);
 
     // Update DB.
     const updateQuery = `
     UPDATE users
-    SET watched_1 = '${watchedArray[0]}', watched_2 = '${watchedArray[1]}', watched_3 = '${watchedArray[2]}'
+    SET watched = '[${stack.items}]'
     WHERE user_id = '${user_id}';
-  `;
+    `;
 
     await DButils.execQuery(updateQuery);
+    return;
 }
 
 
@@ -151,14 +166,10 @@ async function markAsWatched(user_id, recipe_id) {
  * @returns {Array} - An array containing the IDs of the watched recipes in the order [watched_1, watched_2, watched_3].
  */
 async function getWatched(user_id) {
-    const query = `SELECT watched_1, watched_2, watched_3 FROM users WHERE user_id='${user_id}'`;
-    const result = await DButils.execQuery(query);
-
-    const watched_1 = result[0].watched_1;
-    const watched_2 = result[0].watched_2;
-    const watched_3 = result[0].watched_3;
-    return [watched_1, watched_2, watched_3];
-
+    const query = `SELECT watched FROM users WHERE user_id='${user_id}'`;
+    let result = await DButils.execQuery(query);
+    result = result[0].watched;
+    return result;
 }
 
 

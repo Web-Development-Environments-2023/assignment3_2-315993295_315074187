@@ -149,13 +149,11 @@ router.get('/watched', async (req, res, next) => {
 
     const user_id = req.session.user_id;
     const recipes_id = await user_utils.getWatched(user_id);
-    const recipes_id_array = recipes_id.filter((element) => element !== -1).map((element) => element); // Filter null (-1) values, if exist.    
-
-    if (recipes_id_array.length == 0) {
+    if (!recipes_id){
       res.status(200).send([]);
       return;
     }
-
+    const recipes_id_array = recipes_id.map((element) => element);
     const results = await recipe_utils.getRecipePreview(recipes_id_array, false); // TODO: Should possibly be changed from `true` to `false` depending on the frontend.
     res.status(200).send(results);
   } catch (error) {
