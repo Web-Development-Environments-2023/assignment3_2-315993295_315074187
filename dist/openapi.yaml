@@ -40,12 +40,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RecipePreview'
-  /register: # Theirs
+  /register:
     post:
       tags:
       - Auth
-      summary: A new user from the client is added to the server
-      description: A JSON object contains all the details about the new user.
+      summary: Register a new user
+      description: Registers a new user and returns a success message if the registration was successful.
       requestBody:
         description: Inventory item to add
         content:
@@ -56,14 +56,25 @@ paths:
       responses:
         "201":
           description: A new user has been added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "user created"
+                  success:
+                    type: boolean
+                    example: true
         "400":
           description: wrong input parameters
-  /login: # Theirs
+  /login:
     post:
       tags:
       - Auth
-      summary: Login an exist user
-      description: An exist user login to the system
+      summary: Login an existing user
+      description: Logins an existing user and returns a session ID in the Set-Cookie header.
       requestBody:
         content:
           application/json:
@@ -73,7 +84,7 @@ paths:
       responses:
         "200":
           description:
-            User was found in the DB and authenitcated successfully. The session ID is returned in a cookie named `session`.  You should include this cookie in subsequent requests
+            User was found in the DB and authenticated successfully. The session ID is returned in the Set-Cookie header. You should include this cookie in subsequent requests.
           headers:
             Set-Cookie:
               style: simple
@@ -83,18 +94,34 @@ paths:
                 example: session=87s97sdhgf279293f8w0e9
         "401":
           description: Authentication failed
-  /logout: # Theirs
+  /logout:
     post:
       tags:
         - Auth
-      summary: logout a user from the system and delete his cookie
+      summary: Logout a user from the system and delete their cookie
+      description: Logs out a user from the system and deletes their cookie. Returns a success message if the logout was successful.
       responses:
         "200":
-          description: "The user has been successfully logged out."  
+          description: "The user has been successfully logged out."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "logout succeeded"
+        "401":
+          description: The user is not logged in.
   /recipes/search:
     get:
       tags:
         - Recipes
+      summary: Search for recipes
+      description: Searches for recipes based on the search string, number of results, cuisines, diets, and intolerances. The response is an array of objects, each with the following properties
       parameters:
         - in: query
           name: Search_text
@@ -192,11 +219,33 @@ paths:
       responses:
         '200':
           description: Returned search results.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    readyInMinutes:
+                      type: integer
+                    image:
+                      type: string
+                    aggregateLikes:
+                      type: integer
+                    vegan:
+                      type: boolean
+                    glutenFree:
+                      type: boolean
   /recipes/get_random_recipes:
     get:
       tags:
         - Recipes
-      description: Retrieve three random recipes.
+      summary: Get three random recipes
+      description: Gets three random recipes. The response is an array of objects, each with the following properties
       responses:
         '200':
           description: Successful response with random recipes.
@@ -205,13 +254,28 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RecipePreview'
-  /users/favorites: # Theirs
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    readyInMinutes:
+                      type: integer
+                    image:
+                      type: string
+                    aggregateLikes:
+                      type: integer
+                    vegan:
+                      type: boolean
+                    glutenFree:
+                      type: boolean
+  /users/favorites:
     get:
       tags:
       - Users
-      summary: Return the favorite recipes that were saved by user
-      description: Get an array of recipes that were saved by a specific user
+      summary: Get the favorite recipes of a user
+      description: Gets the favorite recipes of a user. The response is an array of objects, each with the following properties
       responses:
         "200":
           description: data about the user's favorites recipes returned
@@ -220,7 +284,22 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RecipePreview'
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    image:
+                      type: string
+                    title:
+                      type: string
+                    readyInMinutes:
+                      type: integer
+                    popularity:
+                      type: integer
+                    vegan:
+                      type: boolean
+                    glutenFree:
+                      type: boolean
         "401":
           description: user is not authorized
       security:
@@ -228,8 +307,8 @@ paths:
     post:
       tags:
       - Users
-      summary: save recipe in the favorites list of a user
-      description: save recipe in the favorites list of a user
+      summary: Save a recipe in the favorites list of a user
+      description: Saves a recipe in the favorites list of a user. The response is a success message.
       requestBody:
         content:
           application/json:
@@ -266,30 +345,91 @@ paths:
             description: user is not authorized
         security:
         - cookieAuth: []
-  /users/familyrecipes: # Ours
+  /users/familyrecipes:
     get:
       tags:
-      - Users
-      summary: Return the family recipes that were saved by user
-      description: Get an array of recipes that were saved by a specific user
+        - Users
+      summary: Get the family recipes of a user
+      description: Gets the family recipes of a user. The response is an array of objects, each with the following properties
       responses:
-        "200":
+        '200':
           description: data about the user's family recipes returned
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RecipePreview'
-        "401":
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    readyInMinutes:
+                      type: integer
+                    image:
+                      type: string
+                    popularity:
+                      type: integer
+                    vegan:
+                      type: boolean
+                    glutenFree:
+                      type: boolean
+                    ingredients:
+                      type: array
+                      items:
+                        type: string
+                    preperation_steps:
+                      type: string
+                    num_of_servings:
+                      type: integer
+                    belongs_to:
+                      type: string
+                    prepared_in:
+                      type: string
+        '401':
           description: user is not authorized
       security:
       - cookieAuth: []
+  /users/watched:
+    get:
+      tags:
+        - Users
+      summary: Get the watched recipes of a user
+      description: Gets the watched recipes of a user. The response is an array of objects, each with the following properties
+      responses:
+        '200':
+          description: data about the user's watched recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    readyInMinutes:
+                      type: integer
+                    image:
+                      type: string
+                    popularity:
+                      type: integer
+                    vegan:
+                      type: boolean
+                    glutenFree:
+                      type: boolean
+          "401":
+            description: user is not authorized
+        security:
+        - cookieAuth: []
     post:
       tags:
-      - Users
-      summary: save recipe in the family list of a user
-      description: save recipe in the family list of a user
+        - Users
+      summary: Save a recipe in the watched list of a user
+      description: Saves a recipe in the watched list of a user. The response is a success message.
       requestBody:
         content:
           application/json:
@@ -298,52 +438,22 @@ paths:
               properties:
                 recipeId:
                   type: string
-                  description: recipe's id which the user saved
-                  example: 1
+                  description: recipe's id which the user watched
+                  example: 716429
       responses:
-        "201":
-          description: The Recipe successfully saved as family recipe
-        "401":
-          description: user is not authorized
-      security:
-      - cookieAuth: []
-  /users/watched: # Ours
-      get:
-        tags:
-        - Users
-        summary: Return the watched recipes that were saved by user
-        description: Get an array of recipes that were watched by a specific user
-        responses:
-          "200":
-            description: data about the user's watched recipes returned
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/RecipePreview'
-          "401":
-            description: user is not authorized
-        security:
-        - cookieAuth: []
-      post:
-        tags:
-        - Users
-        summary: save recipe in the watched list of a user
-        description: save recipe in the watched list of a user
-        requestBody:
+        '201':
+          description: The Recipe successfully saved as watched recipe
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  recipeId:
+                  message:
                     type: string
-                    description: recipe's id which the user watched
-                    example: 716429
-        responses:
-          "201":
-            description: The Recipe successfully saved as watched recipe
+                    example: "The Recipe successfully saved to watched queue."
+                  success:
+                    type: boolean
+                    example: true
           "401":
             description: user is not authorized       
         security:
@@ -353,9 +463,21 @@ paths:
       tags:
         - Users
       summary: Create and insert a recipe into the local database
+      description: Creates and inserts a recipe into the local database. The response is a success message if the recipe was created successfully.
       responses:
         '201':
           description: Recipe created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Added recipe to the local database"
+                  success:
+                    type: boolean
+                    example: true
         '401':
           description: User not logged in
         '409':
@@ -423,7 +545,10 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RecipePreview'
+                  type: object
+                  properties:
+                    recipe_id:
+                      type: integer
         "401":
           description: user is not authorized
       security:
