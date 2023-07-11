@@ -103,7 +103,12 @@ async function getCreatedRecipes(user_id) {
 async function getFamilyRecipes(user_id) {
     const recipe_id = await DButils.execQuery(`SELECT recipe_id FROM users_familyrecipes WHERE user_id='${user_id}'`);
     const recipeIds = recipe_id.map((row) => row.recipe_id).join(","); // Extract recipe IDs and create a comma-separated string
+
+    if (recipeIds.length === 0)
+        return [];
+
     const family_details = await DButils.execQuery(`SELECT belongs_to, prepared_in FROM users_familyrecipes WHERE user_id='${user_id}' AND recipe_id IN (${recipeIds})`);
+
 
     const result = [recipe_id, family_details];
     return result;
