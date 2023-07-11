@@ -57,6 +57,27 @@ router.get('/favorites', async (req, res, next) => {
   }
 });
 
+/**
+ * This path returns the favorite recipes ids that were saved locally
+ */
+router.get('/favoritesid', async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const recipes_id = await user_utils.getFavoriteRecipes(user_id);
+    let recipes_id_array = [];
+    recipes_id.map((element) => recipes_id_array.push(element.recipe_id)); //extracting the recipe ids into array
+
+    if (recipes_id_array.length == 0) {
+      res.status(200).send([]);
+      return;
+    }
+
+    const results = recipes_id;
+    res.status(200).send(results);
+  } catch (error) {
+    next(error);
+  }
+});
 
 /**
  * This path gets body with recipeId and save this recipe in the family recipe list of the logged-in user
@@ -102,6 +123,9 @@ router.get('/familyrecipes', async (req, res, next) => {
     next(error);
   }
 });
+
+
+
 
 
 /**
@@ -155,6 +179,25 @@ router.get('/watched', async (req, res, next) => {
     }
     const recipes_id_array = recipes_id.map((element) => element);
     const results = await recipe_utils.getRecipePreview(recipes_id_array, false);
+    res.status(200).send(results);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * This path gets the watched recipes from the logged in user, id only
+ */
+router.get('/watchedid', async (req, res, next) => {
+  try {
+
+    const user_id = req.session.user_id;
+    const recipes_id = await user_utils.getWatched(user_id);
+    if (!recipes_id) {
+      res.status(200).send([]);
+      return;
+    }
+    const results = recipes_id;
     res.status(200).send(results);
   } catch (error) {
     next(error);

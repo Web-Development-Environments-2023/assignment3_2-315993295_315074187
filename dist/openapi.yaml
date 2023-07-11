@@ -387,8 +387,48 @@ paths:
                   type: integer
       security:
         - cookieAuth: []
-
-
+  /users/favoritesid:
+    get:
+      tags:
+      - Users
+      summary: Return the favorite recipes ids that were saved locally
+      description: Get an array of ids that were saved by a specific user. The response is an array of objects, each with a single property `recipe_id`.
+      responses:
+        "200":
+          description: data about the user's favorite recipes returned, id only
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    recipe_id:
+                      type: integer
+        "401":
+          description: user is not authorized
+      security:
+      - cookieAuth: []
+  /users/watchedid:
+    get:
+      tags:
+      - Users
+      summary: Return the watched recipes ids that were saved locally
+      description: Get an array of ids that were saved by a specific user
+      responses:
+        "200":
+          description: data about the user's watched recipes returned, id only
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: user is not authorized
+      security:
+      - cookieAuth: []
+    
 components:
   schemas:
     User: # Theirs

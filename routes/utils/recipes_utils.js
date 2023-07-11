@@ -42,10 +42,12 @@ async function getRecipePreview(recipe_ids, local = false, full = false) {
     const results = [];
     for (const recipe_id of recipe_ids) {
         let recipe_info;
+        local = recipe_id < 0 ? true : false;
         if (local) {
             recipe_info = await DButils.execQuery(`SELECT * FROM recipes WHERE id = ${recipe_id};`);
             recipe_info = recipe_info[0];
             results.push({
+                id: recipe_info.id,
                 image: recipe_info.image,
                 title: recipe_info.title,
                 readyInMinutes: recipe_info.readyInMinutes,
