@@ -149,12 +149,12 @@ router.get('/watched', async (req, res, next) => {
 
     const user_id = req.session.user_id;
     const recipes_id = await user_utils.getWatched(user_id);
-    if (!recipes_id){
+    if (!recipes_id) {
       res.status(200).send([]);
       return;
     }
     const recipes_id_array = recipes_id.map((element) => element);
-    const results = await recipe_utils.getRecipePreview(recipes_id_array, false); // TODO: Should possibly be changed from `true` to `false` depending on the frontend.
+    const results = await recipe_utils.getRecipePreview(recipes_id_array, false);
     res.status(200).send(results);
   } catch (error) {
     next(error);
@@ -195,7 +195,7 @@ router.post("/recipe_creation", async (req, res, next) => {
     VALUES ('${userid}', '${recipe_details.image}', '${recipe_details.name}', '${recipe_details.readyInMinutes}', 
     0, '${recipe_details.vegan ? 1 : 0}', '${recipe_details.glutenfree ? 1 : 0}', '${JSON.stringify(recipe_details.ingredients)}', '${recipe_details.preperation_steps}', '${recipe_details.num_of_servings}')`
     );
-    
+
     res.status(200).send({ message: "Added recipe to the local database", success: true });
 
   } catch (error) {

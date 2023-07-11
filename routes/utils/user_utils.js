@@ -55,7 +55,6 @@ class Stack {
  * @param {string} recipe_id - The ID of the recipe to mark as favorite.
  */
 async function markAsFavorite(user_id, recipe_id) {
-    // TODO: Check if I need to add this test to other functions that add to the DB.
 
     // Check if the record already exists
     const existingRecord = await DButils.execQuery(

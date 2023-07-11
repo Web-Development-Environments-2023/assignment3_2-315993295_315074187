@@ -28,7 +28,7 @@ router.get("/search", async (req, res, next) => {
     let { Search_text, Num_of_results, cuisines, diets, intolerances } = req.query;
 
     cuisines = Array.isArray(cuisines) ? cuisines : cuisines ? [cuisines] : [];
-    diets = Array.isArray(diets) ? diets : diets ? [diets] : [];  // TODO: Currently supports AND only. Will be able to change with frontend.
+    diets = Array.isArray(diets) ? diets : diets ? [diets] : [];
     intolerances = Array.isArray(intolerances) ? intolerances : intolerances ? [intolerances] : [];
 
     cuisines = cuisines.join(',');
@@ -49,7 +49,7 @@ router.get("/search", async (req, res, next) => {
  */
 router.get("/:recipeId", async (req, res, next) => {
   try {
-    const recipe = await recipes_utils.getRecipePreview(req.params.recipeId, false, true);  // TODO: Should possibly be changed from `true` to `false` depending on the frontend.
+    const recipe = await recipes_utils.getRecipePreview(req.params.recipeId, false, true);
     res.send(recipe);
   } catch (error) {
     next(error);
